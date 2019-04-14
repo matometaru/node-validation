@@ -3,9 +3,11 @@ const Joi = require('joi');
 // 入力値に対する厳密なバリデーション
 function validator(params) {
     // 検証ルールを定義
+    // default設定
     const schema = Joi.object().keys({
         string_ids: Joi.string().required(),
         user_ids: Joi.array().items(Joi.number()).required(),
+        user_group_name: Joi.string().default(""),
     });
 
     const result = Joi.validate(params, schema, { convert: false });
@@ -28,12 +30,14 @@ function converter(params) {
     const convertedParams = {
         stringIds: params.string_ids.split(",").map((v) => +v),
         userIds: params.user_ids,
+        userGroupName: params.user_group_name,
     };
 
     // 検証ルールを定義
     const schema = Joi.object().keys({
         stringIds: Joi.array().items(Joi.number().min(1).integer()).required(),
         userIds: Joi.array().items(Joi.number()).required(),
+        userGroupName: Joi.string().allow("").required(),
     });
 
     // サービスに渡す前の正当性検証
